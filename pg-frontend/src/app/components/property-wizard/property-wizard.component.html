@@ -1,0 +1,138 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Setup Property</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- Progress Bar -->
+  <div class="progress-container">
+    <div class="step" [class.active]="currentStep >= 1">1. Details</div>
+    <div class="line" [class.active]="currentStep >= 2"></div>
+    <div class="step" [class.active]="currentStep >= 2">2. Floors</div>
+    <div class="line" [class.active]="currentStep >= 3"></div>
+    <div class="step" [class.active]="currentStep >= 3">3. Rooms</div>
+  </div>
+
+  <!-- Step 1: Property Details -->
+  <div *ngIf="currentStep === 1" class="step-content">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Property Details</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-label position="stacked">Property Name</ion-label>
+          <ion-input [(ngModel)]="pgData.name" placeholder="e.g. Sai PG"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Address</ion-label>
+          <ion-textarea [(ngModel)]="pgData.address" placeholder="Full Address"></ion-textarea>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Description</ion-label>
+          <ion-textarea [(ngModel)]="pgData.description" placeholder="Optional description"></ion-textarea>
+        </ion-item>
+
+        <div class="ion-margin-top">
+          <ion-button expand="block" (click)="createPG()" [disabled]="loading">
+            <ion-spinner *ngIf="loading"></ion-spinner>
+            <span *ngIf="!loading">Next: Add Floors</span>
+            <ion-icon name="arrow-forward" slot="end"></ion-icon>
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Step 2: Floors -->
+  <div *ngIf="currentStep === 2" class="step-content">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Configure Floors</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p class="helper-text">Add floors to your property.</p>
+
+        <div *ngFor="let floor of floors; let i = index" class="floor-row">
+          <ion-item lines="none" class="floor-input">
+            <ion-label position="stacked">Floor No</ion-label>
+            <ion-input type="number" [(ngModel)]="floor.floorNumber"></ion-input>
+          </ion-item>
+          <ion-item lines="none" class="floor-input">
+            <ion-label position="stacked">Description</ion-label>
+            <ion-input [(ngModel)]="floor.description"></ion-input>
+          </ion-item>
+          <ion-button fill="clear" color="danger" (click)="removeFloorRow(i)" *ngIf="floors.length > 1">
+            <ion-icon name="trash" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+
+        <ion-button fill="outline" expand="block" (click)="addFloorRow()" class="ion-margin-vertical">
+          <ion-icon name="add" slot="start"></ion-icon>
+          Add Floor
+        </ion-button>
+
+        <ion-button expand="block" (click)="saveFloors()" [disabled]="loading">
+          <ion-spinner *ngIf="loading"></ion-spinner>
+          <span *ngIf="!loading">Next: Configure Rooms</span>
+          <ion-icon name="arrow-forward" slot="end"></ion-icon>
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Step 3: Rooms -->
+  <div *ngIf="currentStep === 3" class="step-content">
+    <div *ngFor="let floor of createdFloors">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Floor {{floor.floorNumber}} ({{floor.description}})</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+
+          <div class="room-grid-header">
+            <div>No</div>
+            <div>Type</div>
+            <div>Rent</div>
+            <div>AC</div>
+            <div></div>
+          </div>
+
+          <div *ngFor="let room of roomsByFloor[floor.id]; let i = index" class="room-row">
+            <div class="col-sm">
+              <input class="compact-input" [(ngModel)]="room.roomNumber" placeholder="No">
+            </div>
+            <div class="col-md">
+              <select class="compact-select" [(ngModel)]="room.roomType" (change)="onRoomTypeChange(room)">
+                <option *ngFor="let type of roomTypeOptions" [value]="type.value">{{type.label}}</option>
+              </select>
+            </div>
+            <div class="col-md">
+              <input class="compact-input" type="number" [(ngModel)]="room.rentAmount" placeholder="Rent">
+            </div>
+            <div class="col-sm center">
+              <input type="checkbox" [(ngModel)]="room.isAc">
+            </div>
+            <div class="col-xs">
+              <ion-icon name="trash" color="danger" (click)="removeRoomRow(floor.id, i)"></ion-icon>
+            </div>
+          </div>
+
+          <ion-button fill="clear" size="small" (click)="addRoomRow(floor.id)">
+            <ion-icon name="add" slot="start"></ion-icon> Add Room
+          </ion-button>
+
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <ion-button expand="block" color="success" (click)="finishWizard()" [disabled]="loading" class="ion-margin-top">
+      <ion-spinner *ngIf="loading"></ion-spinner>
+      <span *ngIf="!loading">Finish Setup</span>
+      <ion-icon name="checkmark-circle" slot="end"></ion-icon>
+    </ion-button>
+  </div>
+
+</ion-content>

@@ -1,0 +1,263 @@
+/* Room Selection Container */
+.room-selection-container {
+  --background: #ffffff;
+  padding-bottom: 80px;
+  /* Space for footer */
+}
+
+/* Search Box */
+.search-container {
+  margin-bottom: 20px;
+}
+
+.search-box {
+  background: #F9FAFB;
+  border-radius: 16px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+  border: 1px solid #F3F4F6;
+}
+
+.search-box input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 14px;
+  color: var(--ion-color-primary);
+  background: transparent;
+  font-weight: 500;
+}
+
+.search-box ion-icon {
+  font-size: 22px;
+  color: #9CA3AF;
+}
+
+.search-box .filter-icon {
+  color: var(--ion-color-primary);
+}
+
+/* Filters Scroll (Pills) */
+.filters-scroll {
+  display: flex;
+  overflow-x: auto;
+  gap: 10px;
+  margin-bottom: 24px;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.filter-pill {
+  padding: 8px 16px;
+  background: white;
+  border: 1px solid #E5E7EB;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6B7280;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.filter-pill.active {
+  background: var(--ion-color-primary);
+  color: white;
+  border-color: var(--ion-color-primary);
+  box-shadow: 0 4px 12px rgba(5, 11, 20, 0.2);
+}
+
+/* Floor Section */
+.floor-section {
+  margin-bottom: 24px;
+}
+
+.section-header {
+  margin-bottom: 16px;
+  padding-left: 4px;
+}
+
+.section-header h3 {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--ion-color-primary);
+  margin: 0;
+}
+
+/* Product Grid */
+.product-grid {
+  padding: 0;
+}
+
+.product-card {
+  background: white;
+  border-radius: 20px;
+  padding: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  position: relative;
+  transition: transform 0.2s;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #F3F4F6;
+}
+
+.product-card:active {
+  transform: scale(0.98);
+}
+
+.room-card.booked {
+  opacity: 0.8;
+  background: #F9FAFB;
+}
+
+.image-container {
+  position: relative;
+  width: 100%;
+  padding-top: 80%;
+  /* 4:3 Aspect Ratio */
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.room-placeholder-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.room-placeholder-img.orange-bg {
+  background: #FFF3E0;
+  color: var(--ion-color-secondary);
+}
+
+.room-placeholder-img.gray-bg {
+  background: #E5E7EB;
+  color: #9CA3AF;
+}
+
+.status-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(4px);
+}
+
+.status-badge.ac {
+  color: var(--ion-color-secondary);
+}
+
+.status-badge.non-ac {
+  color: var(--ion-color-primary);
+}
+
+.occupancy-badge {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  background: #ECFDF5;
+  color: var(--ion-color-success);
+}
+
+.occupancy-badge.full {
+  background: #FEF2F2;
+  color: var(--ion-color-danger);
+}
+
+.product-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.product-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ion-color-primary);
+  margin: 0;
+}
+
+.product-info {
+  font-size: 12px;
+  color: #9CA3AF;
+  margin: 0 0 12px 0;
+  font-weight: 500;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+}
+
+.price {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--ion-color-primary);
+}
+
+.add-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: var(--ion-color-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  font-size: 18px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.add-btn:disabled {
+  background: #E5E7EB;
+  color: #9CA3AF;
+  box-shadow: none;
+}
+
+/* Actions */
+.actions {
+  margin-top: 20px;
+}
+
+/* Empty State */
+.empty-state {
+  color: #9CA3AF;
+  font-weight: 500;
+  margin-top: 40px;
+}
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: var(--ion-color-danger);
+}

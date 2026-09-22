@@ -1,0 +1,76 @@
+/* Container: aligned with global layout */
+.student-detail-container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: transparent; /* match global */
+  }
+  
+  /* Remove gradient header, use global student-card */
+  .student-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+  }
+  
+  .profile-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .profile-img {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--primary, #0072ff);
+  }
+  
+  .student-info h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--text-primary, #2c3e50);
+  }
+  
+  .status-badge {
+    display: inline-block;
+    margin-top: 4px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #fff;
+    background: var(--primary, #0072ff);
+  }
+  
+  /* Detail section uses same style as global cards */
+  .student-details {
+    margin-top: 15px;
+  }
+  
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 0;
+  }
+  
+  .detail-row .label {
+    font-weight: 600;
+    color: var(--text-primary, #2c3e50);
+  }
+  
+  .detail-row .value {
+    color: #555;
+  }
+  
+  .detail-row .room-number {
+    background: var(--primary, #0072ff);
+    color: #fff;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-weight: 600;
+  }
+  

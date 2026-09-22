@@ -1,0 +1,49 @@
+.complaints-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.complaint-card {
+    margin: 0;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    background: white;
+}
+
+.complaint-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.header-left {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.header-left h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--ion-color-primary);
+}
+
+.student-name {
+    margin: 2px 0 0 0;
+    font-size: 0.85rem;
+    color: #8898aa;
+}
+
+.description {
+    color: #525f7f;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+}

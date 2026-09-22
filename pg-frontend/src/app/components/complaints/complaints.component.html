@@ -1,0 +1,66 @@
+<ion-header class="ion-no-border">
+    <ion-toolbar color="primary">
+        <ion-title>Complaints & Issues</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+    <div class="complaints-container">
+        <ion-card *ngFor="let complaint of complaints" class="complaint-card">
+            <ion-card-content>
+                <div class="complaint-header">
+                    <div class="header-left">
+                        <ion-icon [name]="complaint.status === 'Open' ? 'warning' : 'checkmark-circle'"
+                            [color]="complaint.status === 'Open' ? 'warning' : 'success'" size="large"></ion-icon>
+                        <div>
+                            <h3>{{ complaint.title }}</h3>
+                            <p class="student-name">{{ complaint.studentName }} • {{ complaint.date }}</p>
+                        </div>
+                    </div>
+                    <ion-badge [color]="complaint.status === 'Open' ? 'warning' : 'success'">{{ complaint.status
+                        }}</ion-badge>
+                </div>
+
+                <p class="description">{{ complaint.description }}</p>
+
+                <div class="actions" *ngIf="complaint.status === 'Open'">
+                    <ion-button fill="outline" size="small" color="success" (click)="resolveComplaint(complaint.id)">
+                        Mark as Resolved
+                    </ion-button>
+                </div>
+            </ion-card-content>
+        </ion-card>
+    </div>
+
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+        <ion-fab-button (click)="setOpen(true)">
+            <ion-icon name="add"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
+
+    <ion-modal [isOpen]="isModalOpen" (didDismiss)="setOpen(false)">
+        <ng-template>
+            <ion-header>
+                <ion-toolbar>
+                    <ion-title>New Complaint</ion-title>
+                    <ion-buttons slot="end">
+                        <ion-button (click)="setOpen(false)">Close</ion-button>
+                    </ion-buttons>
+                </ion-toolbar>
+            </ion-header>
+            <ion-content class="ion-padding">
+                <ion-item>
+                    <ion-label position="stacked">Title</ion-label>
+                    <ion-input [(ngModel)]="newComplaint.title" placeholder="e.g. WiFi Issue"></ion-input>
+                </ion-item>
+                <ion-item>
+                    <ion-label position="stacked">Description</ion-label>
+                    <ion-textarea [(ngModel)]="newComplaint.description"
+                        placeholder="Describe the issue..."></ion-textarea>
+                </ion-item>
+                <ion-button expand="block" class="ion-margin-top" (click)="submitComplaint()">Submit
+                    Complaint</ion-button>
+            </ion-content>
+        </ng-template>
+    </ion-modal>
+</ion-content>

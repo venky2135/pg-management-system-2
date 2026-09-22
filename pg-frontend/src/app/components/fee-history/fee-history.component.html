@@ -1,0 +1,62 @@
+<div class="fee-history-container">
+  <!-- Header -->
+  <div class="history-header">
+    <h3>📊 Payment History - {{student?.name}}</h3>
+    <div class="total-paid">
+      <span>Total Paid: <strong>₹{{totalPaid | number:'1.2-2'}}</strong></span>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading">Loading payment history...</div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="error-message">{{error}}</div>
+
+  <!-- No Fees Message -->
+  <div *ngIf="!loading && fees.length === 0" class="no-fees">
+    <div class="no-fees-icon">💳</div>
+    <h4>No Payment Records</h4>
+    <p>No payment history found for this student.</p>
+  </div>
+
+  <!-- Fees Table -->
+  <div *ngIf="!loading && fees.length > 0" class="fees-table-container">
+    <table class="fees-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Amount</th>
+          <th>Mode</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let fee of fees">
+          <td>{{formatDate(fee.paymentDate)}}</td>
+          <td class="amount">₹{{fee.amount | number:'1.2-2'}}</td>
+          <td>{{fee.mode}}</td>
+          <td>
+            <span class="status-badge" [class]="getStatusClass(fee.status)">
+              {{fee.status}}
+            </span>
+          </td>
+          <td>
+            <ng-container *ngIf="fee.status === 'PENDING'">
+              <button class="btn btn-primary btn-sm send-link-btn" [disabled]="sendingLinkId === fee.id"
+                (click)="sendLink(fee)" title="Send Payment Link">
+                <span class="btn-text">{{ sendingLinkId === fee.id ? 'Sending...' : 'Send Link' }}</span>
+                <span class="btn-icon">📧</span>
+              </button>
+            </ng-container>
+
+            <ng-container *ngIf="fee.status === 'PAID'">
+              <span class="paid-date">Paid on {{fee.paymentDate | date:'mediumDate'}}</span>
+            </ng-container>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

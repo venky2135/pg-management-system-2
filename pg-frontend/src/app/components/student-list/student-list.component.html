@@ -1,0 +1,143 @@
+<ion-content class="ion-padding student-list-content">
+
+  <!-- Search Header -->
+  <div class="search-container">
+    <div class="search-box">
+      <ion-icon name="search-outline"></ion-icon>
+      <input type="text" [(ngModel)]="searchName" (input)="onSearchChange()" placeholder="Search tenants..." />
+      <ion-icon name="filter-outline" class="filter-icon"></ion-icon>
+    </div>
+  </div>
+
+  <!-- Filters Scroll (Pills) -->
+  <div class="filters-scroll">
+    <div class="filter-pill" [class.active]="statusFilter === 'all' && acFilter === 'all'" (click)="clearSearch()">
+      All
+    </div>
+    <div class="filter-pill" [class.active]="statusFilter === 'active'"
+      (click)="statusFilter = 'active'; applyFilters()">
+      Active
+    </div>
+    <div class="filter-pill" [class.active]="statusFilter === 'inactive'"
+      (click)="statusFilter = 'inactive'; applyFilters()">
+      Inactive
+    </div>
+    <div class="filter-pill" [class.active]="acFilter === 'ac'" (click)="acFilter = 'ac'; applyFilters()">
+      AC Rooms
+    </div>
+    <div class="filter-pill" [class.active]="acFilter === 'non-ac'" (click)="acFilter = 'non-ac'; applyFilters()">
+      Non-AC
+    </div>
+  </div>
+
+  <!-- Loading & Error States -->
+  <div *ngIf="loading" class="ion-text-center ion-padding">
+    <ion-spinner color="primary"></ion-spinner>
+    <p class="loading-text">Loading members...</p>
+  </div>
+
+  <div *ngIf="error" class="ion-text-center ion-padding error-container">
+    <ion-icon name="alert-circle-outline" color="danger" size="large"></ion-icon>
+    <p>{{error}}</p>
+    <ion-button (click)="loadStudents()" color="primary" size="small" shape="round">Retry</ion-button>
+  </div>
+
+  <!-- Student List (Rows) -->
+  <div *ngIf="!loading && !error" class="student-list-container">
+    <div *ngIf="filteredStudents.length === 0" class="ion-text-center ion-padding empty-state">
+      <ion-icon name="sad-outline" size="large" color="medium"></ion-icon>
+      <h3>No Members Found</h3>
+      <p>Try adjusting your search.</p>
+    </div>
+
+    <div class="student-list">
+      <div class="student-row" *ngFor="let student of filteredStudents" (click)="editStudent(student)">
+
+        <!-- Avatar -->
+        <div class="student-avatar">
+          <img [src]="getProfileImageUrl(student)" alt="Profile" class="avatar-img" *ngIf="hasProfileImage(student)">
+          <div class="avatar-placeholder" *ngIf="!hasProfileImage(student)">
+            <ion-icon name="person-outline"></ion-icon>
+          </div>
+        </div>
+
+        <!-- Info -->
+        <div class="student-info">
+          <div class="info-top">
+            <h3 class="student-name">{{student.name}}</h3>
+            <span class="status-dot" [class.active]="student.isActive !== false"
+              [class.inactive]="student.isActive === false"></span>
+          </div>
+          <div class="info-bottom">
+            <span class="room-badge">
+              <ion-icon name="bed-outline"></ion-icon>
+              {{student.roomNo}}
+            </span>
+            <span class="separator">•</span>
+            <span class="ac-text">{{ roomAcMap[student.roomNo] ? 'AC' : 'Non-AC' }}</span>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="student-actions" (click)="$event.stopPropagation()">
+          <button class="action-btn add-btn" (click)="addFee(student)">
+            <ion-icon name="add-outline"></ion-icon>
+          </button>
+          <button class="action-btn history-btn" (click)="viewFeeHistory(student)">
+            <ion-icon name="time-outline"></ion-icon>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- FAB -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" class="custom-fab">
+    <ion-fab-button (click)="addStudent()" class="add-fab-btn">
+      <ion-icon name="add-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <!-- Modals -->
+  <ion-modal [isOpen]="showStudentModal" (didDismiss)="closeStudentModal()" class="custom-modal">
+    <ng-template>
+      <app-student-form [student]="selectedStudent" [isEditMode]="isEditMode" (studentSaved)="onStudentSaved($event)"
+        (cancelled)="closeStudentModal()" (deleteRequested)="onDeleteRequested($event)"></app-student-form>
+    </ng-template>
+  </ion-modal>
+
+  <ion-modal [isOpen]="showFeeModal" (didDismiss)="closeFeeModal()" class="custom-modal">
+    <ng-template>
+      <ion-header class="ion-no-border">
+        <ion-toolbar>
+          <ion-title>Add Payment</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="closeFeeModal()">Close</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="modal-content-bg">
+        <app-fee-form [student]="selectedStudent" (feeSaved)="onFeeSaved($event)"
+          (cancelled)="closeFeeModal()"></app-fee-form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <ion-modal [isOpen]="showFeeHistoryModal" (didDismiss)="closeFeeHistoryModal()" class="custom-modal">
+    <ng-template>
+      <ion-header class="ion-no-border">
+        <ion-toolbar>
+          <ion-title>Payment History</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="closeFeeHistoryModal()">Close</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="modal-content-bg">
+        <app-fee-history [student]="selectedStudent"></app-fee-history>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+</ion-content>

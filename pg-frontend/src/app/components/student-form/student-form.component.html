@@ -1,0 +1,138 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="onCancel()">
+        <ion-icon name="arrow-back-outline" color="dark"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="header-title">{{ isEditMode ? 'Edit Tenant' : 'Add Tenant' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding form-content">
+  <!-- Progress Indicator -->
+  <div class="progress-container">
+    <div class="step-item active">
+      <div class="step-circle">1</div>
+      <span>Details</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step-item" [class.active]="formStudent.name && formStudent.phone">
+      <div class="step-circle">2</div>
+      <span>Room</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step-item" [class.active]="formStudent.roomNo">
+      <div class="step-circle">3</div>
+      <span>Confirm</span>
+    </div>
+  </div>
+
+  <form (ngSubmit)="onSubmit()" #studentForm="ngForm" class="tenant-form">
+
+    <!-- Profile Image Upload -->
+    <div class="profile-upload-section">
+      <div class="profile-image-wrapper" (click)="fileInput.click()">
+        <img [src]="formStudent.profileImage" *ngIf="formStudent.profileImage" class="uploaded-image">
+        <div class="placeholder" *ngIf="!formStudent.profileImage">
+          <ion-icon name="camera-outline"></ion-icon>
+          <span>Add Photo</span>
+        </div>
+        <div class="edit-badge" *ngIf="formStudent.profileImage">
+          <ion-icon name="create-outline"></ion-icon>
+        </div>
+      </div>
+      <input #fileInput type="file" accept="image/*" (change)="onProfileImageChange($event)" hidden>
+    </div>
+
+    <!-- Basic Information Section -->
+    <div class="form-section">
+      <h3 class="section-title">Personal Details</h3>
+
+      <div class="input-group">
+        <div class="input-wrapper">
+          <ion-icon name="person-outline" class="input-icon"></ion-icon>
+          <div class="input-content">
+            <ion-label position="stacked">Full Name</ion-label>
+            <ion-input [(ngModel)]="formStudent.name" name="name" required placeholder="Enter name"
+              class="custom-input"></ion-input>
+          </div>
+        </div>
+
+        <div class="input-wrapper">
+          <ion-icon name="call-outline" class="input-icon"></ion-icon>
+          <div class="input-content">
+            <ion-label position="stacked">Phone Number</ion-label>
+            <ion-input [(ngModel)]="formStudent.phone" name="phone" type="tel" required placeholder="Enter phone"
+              class="custom-input"></ion-input>
+          </div>
+        </div>
+
+        <div class="input-wrapper">
+          <ion-icon name="mail-outline" class="input-icon"></ion-icon>
+          <div class="input-content">
+            <ion-label position="stacked">Email</ion-label>
+            <ion-input [(ngModel)]="formStudent.email" name="email" type="email" required placeholder="Enter email"
+              class="custom-input"></ion-input>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Room Details Section -->
+    <div class="form-section">
+      <h3 class="section-title">Accommodation</h3>
+
+      <div class="input-group">
+        <div class="input-wrapper" (click)="openRoomSelection()">
+          <ion-icon name="bed-outline" class="input-icon"></ion-icon>
+          <div class="input-content">
+            <ion-label position="stacked">Room Number</ion-label>
+            <div class="room-selector-value">
+              <span>{{ formStudent.roomNo || 'Select Room' }}</span>
+              <ion-icon name="chevron-forward-outline"></ion-icon>
+            </div>
+          </div>
+        </div>
+
+        <div class="input-wrapper">
+          <ion-icon name="calendar-outline" class="input-icon"></ion-icon>
+          <div class="input-content">
+            <ion-label position="stacked">Move In Date</ion-label>
+            <input type="date" [(ngModel)]="formStudent.joinDate" name="joinDate" class="native-date-input">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <ion-button *ngIf="isEditMode" fill="outline" color="danger" class="delete-btn" (click)="onDelete()"
+        type="button">
+        <ion-icon name="trash-outline" slot="start"></ion-icon>
+        Delete Tenant
+      </ion-button>
+      <ion-button expand="block" type="submit" class="submit-btn" [disabled]="!studentForm.form.valid">
+        {{ isEditMode ? 'Update Tenant' : 'Add Tenant' }}
+      </ion-button>
+    </div>
+
+  </form>
+</ion-content>
+
+<!-- Room Selection Modal -->
+<ion-modal [isOpen]="showRoomSelection" (didDismiss)="closeRoomSelection()" class="room-modal">
+  <ng-template>
+    <ion-header class="ion-no-border">
+      <ion-toolbar>
+        <ion-title>Select Room</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="closeRoomSelection()">Close</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="modal-bg">
+      <app-room-selection (roomSelected)="onRoomSelected($event)"
+        (cancelled)="closeRoomSelection()"></app-room-selection>
+    </ion-content>
+  </ng-template>
+</ion-modal>

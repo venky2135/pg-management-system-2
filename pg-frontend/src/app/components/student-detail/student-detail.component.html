@@ -1,0 +1,33 @@
+<div class="student-detail-container">
+  <div class="student-card fade-in">
+    <div class="student-header">
+      <div class="profile-section">
+        <img [src]="student.profilePicUrl || 'assets/pghut.png'" 
+             alt="Profile Picture" 
+             class="profile-img" />
+        <div class="student-info">
+          <h3>{{ student.name }}</h3>
+          <span class="status-badge active">Active</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="student-details">
+      <div class="detail-row">
+        <span class="label">Email</span>
+        <span class="value">{{ student.email }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Room</span>
+        <span class="room-number">{{ student.room }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Fees</span>
+        <span class="value">{{ student.fee | currency:'INR' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <app-fee-form [studentId]="student.id"></app-fee-form>
+  <app-fee-history [studentId]="student.id"></app-fee-history>
+</div>

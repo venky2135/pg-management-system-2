@@ -1,0 +1,103 @@
+<ion-content class="ion-padding room-selection-content">
+  <div class="room-selection-container">
+
+    <!-- Search Bar -->
+    <div class="search-container">
+      <div class="search-box">
+        <ion-icon name="search-outline"></ion-icon>
+        <input type="text" placeholder="Search rooms..." />
+        <ion-icon name="filter-outline" class="filter-icon"></ion-icon>
+      </div>
+    </div>
+
+    <!-- Pill Filters -->
+    <div class="filters-scroll">
+      <div class="filter-pill"
+        [class.active]="selectedFloor === 'all' && selectedType === 'all' && selectedAc === 'all' && !availableOnly"
+        (click)="resetFilters()">
+        All
+      </div>
+      <div class="filter-pill" [class.active]="selectedAc === 'ac'" (click)="toggleAc('ac')">
+        AC
+      </div>
+      <div class="filter-pill" [class.active]="selectedAc === 'non-ac'" (click)="toggleAc('non-ac')">
+        Non-AC
+      </div>
+      <div class="filter-pill" [class.active]="availableOnly" (click)="toggleAvailable()">
+        Available
+      </div>
+      <!-- Floor Filters -->
+      <div class="filter-pill" *ngFor="let floor of floors" [hidden]="floor === 'all'"
+        [class.active]="selectedFloor === floor" (click)="selectFloor(floor)">
+        {{floor}} Floor
+      </div>
+    </div>
+
+    <!-- Loading & Error -->
+    <div *ngIf="loading" class="ion-text-center ion-padding">
+      <ion-spinner color="primary"></ion-spinner>
+      <p class="loading-text">Loading rooms...</p>
+    </div>
+
+    <div *ngIf="error" class="ion-text-center ion-padding error-container">
+      <ion-icon name="alert-circle-outline" color="danger"></ion-icon>
+      <p>{{error}}</p>
+      <ion-button (click)="loadRooms()" size="small" fill="outline" color="primary">Retry</ion-button>
+    </div>
+
+    <!-- Room Grid (Grouped by Floor) -->
+    <div *ngIf="!loading && !error" class="rooms-content">
+      <div *ngIf="groupedRooms.length === 0" class="ion-text-center ion-padding empty-state">
+        <p>No matching rooms found.</p>
+      </div>
+
+      <div *ngFor="let group of groupedRooms" class="floor-section">
+        <div class="section-header">
+          <h3>{{group.floor}} Floor</h3>
+        </div>
+
+        <ion-grid class="product-grid">
+          <ion-row>
+            <ion-col size="6" size-md="4" *ngFor="let room of group.rooms">
+              <div class="product-card room-card" [class.booked]="room.isBooked" (click)="select(room)">
+                <div class="image-container">
+                  <!-- Placeholder Room Image -->
+                  <div class="room-placeholder-img" [class.orange-bg]="!room.isBooked" [class.gray-bg]="room.isBooked">
+                    <ion-icon name="bed-outline" size="large"></ion-icon>
+                  </div>
+                  <div class="status-badge" [class.ac]="room.isAc" [class.non-ac]="!room.isAc">
+                    {{ room.isAc ? 'AC' : 'Non-AC' }}
+                  </div>
+                  <div class="occupancy-badge" [class.full]="room.isBooked">
+                    {{ room.isBooked ? 'Full' : 'Available' }}
+                  </div>
+                </div>
+
+                <div class="product-details">
+                  <div class="header-row">
+                    <h3 class="product-name">Room {{room.roomNumber}}</h3>
+                  </div>
+                  <p class="product-info">{{formatRoomType(room.roomType)}}</p>
+
+                  <div class="price-row">
+                    <span class="price">₹{{room.rentAmount}}</span>
+                    <button class="add-btn" [disabled]="room.isBooked">
+                      <ion-icon name="add-outline" *ngIf="!room.isBooked"></ion-icon>
+                      <ion-icon name="close-outline" *ngIf="room.isBooked"></ion-icon>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+    </div>
+
+    <div class="actions ion-text-center ion-padding-top">
+      <ion-button fill="clear" color="medium" (click)="cancel()">
+        Cancel Selection
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

@@ -1,0 +1,57 @@
+<ion-content class="register-content">
+    <div class="register-container">
+        <div class="header-section">
+            <h1>Create Account</h1>
+            <p>Join NestPG to manage your properties efficiently</p>
+        </div>
+
+        <form (ngSubmit)="register()" class="register-form">
+            <div class="input-group">
+                <ion-item lines="none" class="custom-input">
+                    <ion-icon name="person-outline" slot="start"></ion-icon>
+                    <ion-input [(ngModel)]="owner.name" name="name" type="text" placeholder="Full Name"
+                        required></ion-input>
+                </ion-item>
+
+                <ion-item lines="none" class="custom-input">
+                    <ion-icon name="logo-whatsapp" slot="start"></ion-icon>
+                    <ion-input [(ngModel)]="owner.whatsappNumber" name="whatsappNumber" type="tel"
+                        placeholder="WhatsApp Number" required></ion-input>
+                </ion-item>
+
+                <ion-item lines="none" class="custom-input">
+                    <ion-icon name="mail-outline" slot="start"></ion-icon>
+                    <ion-input [(ngModel)]="owner.email" name="email" type="email"
+                        placeholder="Email Address"></ion-input>
+                </ion-item>
+
+                <ion-item lines="none" class="custom-input">
+                    <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+                    <ion-input [(ngModel)]="owner.password" name="password" type="password" placeholder="Password"
+                        required></ion-input>
+                </ion-item>
+
+                <ion-item lines="none" class="custom-input">
+                    <ion-icon name="location-outline" slot="start"></ion-icon>
+                    <ion-input [(ngModel)]="owner.address" name="address" type="text" placeholder="Address"></ion-input>
+                </ion-item>
+
+                <ion-item lines="none" class="custom-input">
+                    <ion-icon name="calendar-outline" slot="start"></ion-icon>
+                    <ion-input [(ngModel)]="owner.dob" name="dob" type="date" placeholder="Date of Birth"></ion-input>
+                </ion-item>
+            </div>
+
+            <div class="actions">
+                <ion-button expand="block" type="submit" class="register-btn" [disabled]="loading">
+                    <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
+                    <span *ngIf="!loading">Register</span>
+                </ion-button>
+            </div>
+
+            <div class="footer-links">
+                <p>Already have an account? <a (click)="navigateToLogin()">Login</a></p>
+            </div>
+        </form>
+    </div>
+</ion-content>

@@ -1,0 +1,80 @@
+.progress-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 0 10px;
+}
+
+.step {
+  font-size: 14px;
+  color: #ccc;
+  font-weight: bold;
+}
+
+.step.active {
+  color: var(--ion-color-primary);
+}
+
+.line {
+  flex: 1;
+  height: 2px;
+  background: #eee;
+  margin: 0 10px;
+}
+
+.line.active {
+  background: var(--ion-color-primary);
+}
+
+.floor-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.floor-input {
+  flex: 1;
+  --background: #f9f9f9;
+  border-radius: 8px;
+}
+
+/* Room Grid Styles */
+.room-grid-header {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 1.5fr 0.5fr 0.5fr;
+  gap: 5px;
+  font-weight: bold;
+  font-size: 12px;
+  margin-bottom: 5px;
+  color: #666;
+}
+
+.room-row {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 1.5fr 0.5fr 0.5fr;
+  gap: 5px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.compact-input, .compact-select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.center {
+  text-align: center;
+}
+
+.helper-text {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
