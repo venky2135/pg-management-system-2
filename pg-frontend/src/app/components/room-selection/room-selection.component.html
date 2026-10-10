@@ -81,7 +81,7 @@
 
                   <div class="price-row">
                     <span class="price">₹{{room.rentAmount}}</span>
-                    <button class="add-btn" [disabled]="room.isBooked">
+                    <button class="add-btn" [disabled]="room.isBooked" (click)="addStudent(room, $event)" title="Add tenant to this room">
                       <ion-icon name="add-outline" *ngIf="!room.isBooked"></ion-icon>
                       <ion-icon name="close-outline" *ngIf="room.isBooked"></ion-icon>
                     </button>

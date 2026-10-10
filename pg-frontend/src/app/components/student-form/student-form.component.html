@@ -28,6 +28,12 @@
     </div>
   </div>
 
+  <!-- Global Form Error Banner -->
+  <div class="form-error-banner" *ngIf="formError">
+    <ion-icon name="alert-circle-outline"></ion-icon>
+    <span>{{ formError }}</span>
+  </div>
+
   <form (ngSubmit)="onSubmit()" #studentForm="ngForm" class="tenant-form">
 
     <!-- Profile Image Upload -->
@@ -50,30 +56,33 @@
       <h3 class="section-title">Personal Details</h3>
 
       <div class="input-group">
-        <div class="input-wrapper">
+        <div class="input-wrapper" [class.has-error]="errors['name']">
           <ion-icon name="person-outline" class="input-icon"></ion-icon>
           <div class="input-content">
             <ion-label position="stacked">Full Name</ion-label>
             <ion-input [(ngModel)]="formStudent.name" name="name" required placeholder="Enter name"
-              class="custom-input"></ion-input>
+              class="custom-input" (ionInput)="clearError('name')"></ion-input>
+            <div class="field-error" *ngIf="errors['name']">{{ errors['name'] }}</div>
           </div>
         </div>
 
-        <div class="input-wrapper">
+        <div class="input-wrapper" [class.has-error]="errors['phone']">
           <ion-icon name="call-outline" class="input-icon"></ion-icon>
           <div class="input-content">
             <ion-label position="stacked">Phone Number</ion-label>
-            <ion-input [(ngModel)]="formStudent.phone" name="phone" type="tel" required placeholder="Enter phone"
-              class="custom-input"></ion-input>
+            <ion-input [(ngModel)]="formStudent.phone" name="phone" type="tel" required placeholder="Enter 10-digit phone"
+              class="custom-input" (ionInput)="clearError('phone')"></ion-input>
+            <div class="field-error" *ngIf="errors['phone']">{{ errors['phone'] }}</div>
           </div>
         </div>
 
-        <div class="input-wrapper">
+        <div class="input-wrapper" [class.has-error]="errors['email']">
           <ion-icon name="mail-outline" class="input-icon"></ion-icon>
           <div class="input-content">
             <ion-label position="stacked">Email</ion-label>
-            <ion-input [(ngModel)]="formStudent.email" name="email" type="email" required placeholder="Enter email"
-              class="custom-input"></ion-input>
+            <ion-input [(ngModel)]="formStudent.email" name="email" type="email" required placeholder="Enter email (e.g. name@gmail.com)"
+              class="custom-input" (ionInput)="clearError('email')"></ion-input>
+            <div class="field-error" *ngIf="errors['email']">{{ errors['email'] }}</div>
           </div>
         </div>
       </div>
@@ -84,7 +93,7 @@
       <h3 class="section-title">Accommodation</h3>
 
       <div class="input-group">
-        <div class="input-wrapper" (click)="openRoomSelection()">
+        <div class="input-wrapper room-clickable" (click)="openRoomSelection()" [class.has-error]="errors['roomNo']">
           <ion-icon name="bed-outline" class="input-icon"></ion-icon>
           <div class="input-content">
             <ion-label position="stacked">Room Number</ion-label>
@@ -92,6 +101,7 @@
               <span>{{ formStudent.roomNo || 'Select Room' }}</span>
               <ion-icon name="chevron-forward-outline"></ion-icon>
             </div>
+            <div class="field-error" *ngIf="errors['roomNo']">{{ errors['roomNo'] }}</div>
           </div>
         </div>
 
@@ -105,16 +115,21 @@
       </div>
     </div>
 
+    <!-- Submit Actions -->
     <div class="form-actions">
       <ion-button *ngIf="isEditMode" fill="outline" color="danger" class="delete-btn" (click)="onDelete()"
         type="button">
         <ion-icon name="trash-outline" slot="start"></ion-icon>
         Delete Tenant
       </ion-button>
-      <ion-button expand="block" type="submit" class="submit-btn" [disabled]="!studentForm.form.valid">
-        {{ isEditMode ? 'Update Tenant' : 'Add Tenant' }}
+      <ion-button expand="block" type="submit" class="submit-btn" [disabled]="submitting">
+        <ion-spinner *ngIf="submitting" name="crescent" class="btn-spinner"></ion-spinner>
+        <span *ngIf="!submitting">{{ isEditMode ? 'Update Tenant' : 'Add Tenant' }}</span>
       </ion-button>
     </div>
+
+    <!-- Spacer for curved footer -->
+    <div class="spacer-bottom"></div>
 
   </form>
 </ion-content>

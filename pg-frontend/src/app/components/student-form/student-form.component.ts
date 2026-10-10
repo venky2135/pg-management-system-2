@@ -1,6 +1,7 @@
-import { Component, EventEmitter, Input, OnInit, Output, ChangeDetectorRef } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Student } from '../../models/student.model';
 import { StudentService } from '../../services/student.service';
 import { RoomSelectionComponent } from '../room-selection/room-selection.component';
@@ -8,12 +9,13 @@ import {
   IonItem, IonInput, IonLabel, IonButton, IonIcon, IonAvatar,
   IonCheckbox, IonDatetime, IonDatetimeButton, IonModal, IonContent,
   IonHeader, IonToolbar, IonTitle, IonButtons, IonFabButton,
-  IonCard, IonCardContent
+  IonCard, IonCardContent, IonSpinner, ToastController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   personOutline, mailOutline, callOutline, calendarOutline, cameraOutline,
-  arrowBackOutline, createOutline, bedOutline, chevronForwardOutline, trashOutline
+  arrowBackOutline, createOutline, bedOutline, chevronForwardOutline, trashOutline,
+  alertCircleOutline
 } from 'ionicons/icons';
 
 @Component({
@@ -24,7 +26,7 @@ import {
     IonItem, IonInput, IonLabel, IonButton, IonIcon, IonAvatar,
     IonCheckbox, IonDatetime, IonDatetimeButton, IonModal, IonContent,
     IonHeader, IonToolbar, IonTitle, IonButtons, IonFabButton,
-    IonCard, IonCardContent
+    IonCard, IonCardContent, IonSpinner
   ],
   templateUrl: './student-form.component.html',
   styleUrls: ['./student-form.component.css']
@@ -35,6 +37,10 @@ export class StudentFormComponent implements OnInit {
   @Output() studentSaved = new EventEmitter<Student>();
   @Output() cancelled = new EventEmitter<void>();
   @Output() deleteRequested = new EventEmitter<Student>();
+
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private toastController = inject(ToastController);
 
   formStudent: Student = {
     name: '',
@@ -47,14 +53,16 @@ export class StudentFormComponent implements OnInit {
   };
 
   showRoomSelection = false;
-  errors: any = {};
+  errors: Record<string, string> = {};
   formError: string | null = null;
+  submitting = false;
 
   constructor(private cdr: ChangeDetectorRef, private studentService: StudentService) {
     console.log('StudentFormComponent initialized');
     addIcons({
       personOutline, mailOutline, callOutline, calendarOutline, cameraOutline,
-      arrowBackOutline, createOutline, bedOutline, chevronForwardOutline, trashOutline
+      arrowBackOutline, createOutline, bedOutline, chevronForwardOutline, trashOutline,
+      alertCircleOutline
     });
   }
 
@@ -66,6 +74,12 @@ export class StudentFormComponent implements OnInit {
       }
     } else {
       this.resetForm();
+      this.route.queryParams.subscribe(params => {
+        if (params['roomNo']) {
+          this.formStudent.roomNo = params['roomNo'];
+          this.cdr.detectChanges();
+        }
+      });
     }
   }
 
@@ -81,30 +95,72 @@ export class StudentFormComponent implements OnInit {
     };
     this.errors = {};
     this.formError = null;
+    this.submitting = false;
   }
 
-  onSubmit() {
+  clearError(field: string) {
+    if (this.errors[field]) {
+      delete this.errors[field];
+    }
     this.formError = null;
-    if (!this.validateForm()) return;
+  }
+
+  async onSubmit() {
+    this.formError = null;
+    if (!this.validateForm()) {
+      return;
+    }
+
+    this.submitting = true;
 
     if (this.isEditMode && this.student?.id !== undefined) {
       this.studentService.update(this.student.id, this.formStudent).subscribe({
-        next: (response) => {
+        next: async (response) => {
+          this.submitting = false;
           this.studentSaved.emit(response);
           this.resetForm();
+
+          const toast = await this.toastController.create({
+            message: 'Tenant updated successfully!',
+            duration: 2500,
+            color: 'success',
+            position: 'top'
+          });
+          await toast.present();
+
+          if (!this.student) {
+            this.router.navigate(['/students']);
+          }
         },
         error: (err) => {
-          this.formError = err.error?.error || 'Error updating student';
+          this.submitting = false;
+          this.formError = err.error?.error || err.error?.message || 'Error updating student';
+          this.cdr.detectChanges();
         }
       });
     } else {
       this.studentService.create(this.formStudent).subscribe({
-        next: (response) => {
+        next: async (response) => {
+          this.submitting = false;
           this.studentSaved.emit(response);
           this.resetForm();
+
+          const toast = await this.toastController.create({
+            message: 'Tenant added successfully!',
+            duration: 2500,
+            color: 'success',
+            position: 'top'
+          });
+          await toast.present();
+
+          if (!this.student) {
+            this.router.navigate(['/students']);
+          }
         },
         error: (err) => {
-          this.formError = err.error?.error || 'Error adding student';
+          this.submitting = false;
+          this.formError = err.error?.error || err.error?.message || 'Error adding student';
+          this.cdr.detectChanges();
         }
       });
     }
@@ -112,6 +168,10 @@ export class StudentFormComponent implements OnInit {
 
   onCancel() {
     this.cancelled.emit();
+    // If opened as a page route, navigate back to students
+    if (!this.student) {
+      this.router.navigate(['/students']);
+    }
   }
 
   onDelete() {
@@ -125,47 +185,48 @@ export class StudentFormComponent implements OnInit {
     let isValid = true;
 
     if (!this.formStudent.name?.trim()) {
-      this.errors.name = 'Name is required';
-      isValid = false;
-    }
-
-    if (!this.formStudent.email?.trim()) {
-      this.errors.email = 'Email is required';
-      isValid = false;
-    } else if (!this.isValidEmail(this.formStudent.email)) {
-      this.errors.email = 'Invalid email format';
+      this.errors['name'] = 'Full Name is required';
       isValid = false;
     }
 
     if (!this.formStudent.phone?.trim()) {
-      this.errors.phone = 'Phone is required';
+      this.errors['phone'] = 'Phone Number is required';
       isValid = false;
     } else if (!this.isValidPhone(this.formStudent.phone)) {
-      this.errors.phone = 'Phone must be 10 digits';
+      this.errors['phone'] = 'Phone must be a valid 10-digit number';
+      isValid = false;
+    }
+
+    if (!this.formStudent.email?.trim()) {
+      this.errors['email'] = 'Email is required';
+      isValid = false;
+    } else if (!this.isValidEmail(this.formStudent.email)) {
+      this.errors['email'] = 'Please enter a valid email address (e.g., name@gmail.com)';
       isValid = false;
     }
 
     if (!this.formStudent.roomNo?.trim()) {
-      this.errors.roomNo = 'Room number is required';
+      this.errors['roomNo'] = 'Please select a room';
       isValid = false;
     }
 
+    this.cdr.detectChanges();
     return isValid;
   }
 
   isValidEmail(email: string): boolean {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    return emailRegex.test(email.trim());
   }
 
   isValidPhone(phone: string): boolean {
-    const phoneRegex = /^[0-9]{10}$/;
     const cleanPhone = phone.replace(/\D/g, '');
-    return phoneRegex.test(cleanPhone);
+    return cleanPhone.length === 10;
   }
 
   onRoomSelected(roomNumber: string) {
     this.formStudent.roomNo = roomNumber;
+    this.clearError('roomNo');
     this.showRoomSelection = false;
     this.cdr.detectChanges();
   }

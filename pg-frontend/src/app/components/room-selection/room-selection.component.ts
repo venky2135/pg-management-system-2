@@ -1,5 +1,6 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { Room } from '../../models/room.model';
 import { FormsModule } from '@angular/forms';
 import { RoomService } from '../../services/room.service';
@@ -27,6 +28,8 @@ import { bedOutline, checkmarkCircleOutline, closeOutline, refreshOutline, alert
 export class RoomSelectionComponent implements OnInit {
   @Output() roomSelected = new EventEmitter<string>();
   @Output() cancelled = new EventEmitter<void>();
+
+  private router = inject(Router);
 
   allRooms: Room[] = [];
   filteredRooms: Room[] = [];
@@ -137,7 +140,7 @@ export class RoomSelectionComponent implements OnInit {
       rooms: groups[floor]
     })).sort((a, b) => {
       if (a.floor === 'Ground') return -1;
-      if (b.floor === 'Ground') return 1;
+      if (a.floor === 'Ground') return 1;
       return a.floor.localeCompare(b.floor, undefined, { numeric: true });
     });
   }
@@ -181,11 +184,31 @@ export class RoomSelectionComponent implements OnInit {
     if (room.isBooked) {
       return;
     }
-    this.roomSelected.emit(room.roomNumber);
+    if (this.roomSelected.observed) {
+      this.roomSelected.emit(room.roomNumber);
+    } else {
+      this.router.navigate(['/add-student'], { queryParams: { roomNo: room.roomNumber } });
+    }
+  }
+
+  addStudent(room: Room, event: MouseEvent) {
+    event.stopPropagation();
+    if (room.isBooked) {
+      return;
+    }
+    if (this.roomSelected.observed) {
+      this.roomSelected.emit(room.roomNumber);
+    } else {
+      this.router.navigate(['/add-student'], { queryParams: { roomNo: room.roomNumber } });
+    }
   }
 
   cancel() {
-    this.cancelled.emit();
+    if (this.cancelled.observed) {
+      this.cancelled.emit();
+    } else {
+      this.router.navigate(['/home']);
+    }
   }
 
   getRoomStatusText(room: Room): string {
