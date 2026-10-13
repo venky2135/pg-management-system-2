@@ -130,3 +130,6 @@ bld/
 .angular/cache/
 pg-frontend/.angular/cache/
 pg-backend/target/
+
+# Graphify knowledge graph (generated build artifact)
+graphify-out/
